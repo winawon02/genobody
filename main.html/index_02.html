@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>GENOBODY — Private Recovery Studio</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap");
+
+      :root {
+        --ink: #242424;
+        --muted: #74716c;
+        --line: #e7e6e3;
+        --paper: #fff;
+        --soft: #f8f8f6;
+        --image: #efefed;
+        --accent: #a8805c;
+        --page: min(100% - 96px, 1440px);
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body { margin: 0; color: var(--ink); background: var(--paper); font-family: "Noto Sans KR", Arial, sans-serif; font-size: 16px; line-height: 1.75; word-break: keep-all; overflow-wrap: break-word; }
+      h1, h2, h3, p { margin: 0; }
+      a { color: inherit; }
+      button { font: inherit; }
+      ::selection { color: #fff; background: var(--accent); }
+      .shell { width: var(--page); margin: 0 auto; }
+      .eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .12em; }
+      .eyebrow::before { width: 25px; height: 1px; background: currentColor; content: ""; }
+      .title { max-width: 720px; font-size: clamp(37px, 4vw, 58px); font-weight: 600; letter-spacing: -.095em; line-height: 1.27; }
+      .title em { color: var(--accent); font-style: normal; font-weight: 500; }
+      .copy { max-width: 465px; color: var(--muted); font-size: 15px; letter-spacing: -.04em; line-height: 1.9; }
+
+      /* Header */
+      .header { position: fixed; inset: 0 0 auto; z-index: 20; height: 78px; border-bottom: 1px solid transparent; background: rgba(255,255,255,.94); transition: border-color .3s, box-shadow .3s; backdrop-filter: blur(10px); }
+      .header.is-scrolled { border-color: var(--line); box-shadow: 0 8px 25px rgba(36,36,36,.035); }
+      .header-inner { display: flex; align-items: center; justify-content: space-between; height: 100%; }
+      .brand { font-size: 16px; font-weight: 700; letter-spacing: -.07em; text-decoration: none; }
+      .brand span { color: var(--accent); font-size: 9px; font-weight: 600; letter-spacing: .16em; }
+      .nav { display: flex; gap: clamp(18px, 2.5vw, 42px); margin-left: 120px; }
+      .nav a { position: relative; padding: 8px 0; font-size: 11px; font-weight: 600; letter-spacing: .035em; text-decoration: none; }
+      .nav a::after { position: absolute; right: 0; bottom: 2px; left: 0; height: 1px; background: var(--ink); content: ""; transform: scaleX(0); transform-origin: right; transition: transform .3s ease; }
+      .nav a:hover::after { transform: scaleX(1); transform-origin: left; }
+      .nav-cta { display: inline-flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 700; letter-spacing: -.02em; text-decoration: none; }
+      .nav-cta i { display: grid; width: 27px; height: 27px; place-items: center; border: 1px solid var(--ink); border-radius: 50%; font-size: 16px; font-style: normal; transition: transform .3s, background .3s, color .3s; }
+      .nav-cta:hover i { color: #fff; background: var(--ink); transform: rotate(45deg); }
+      .menu { display: none; width: 37px; height: 37px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+      .menu span { display: block; width: 22px; height: 1px; margin: 5px auto; background: var(--ink); transition: transform .3s, opacity .3s; }
+
+      /* Hero */
+      .hero { min-height: 800px; padding: 160px 0 74px; }
+      .hero-grid { display: grid; grid-template-columns: .88fr 1.12fr; gap: clamp(58px, 8vw, 150px); align-items: end; }
+      .hero-copy { padding-bottom: 45px; }
+      .hero-kicker { margin-bottom: 21px; color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .13em; }
+      .hero h1 { max-width: 610px; font-size: clamp(50px, 5vw, 74px); font-weight: 600; letter-spacing: -.11em; line-height: 1.19; }
+      .hero h1 em { display: block; color: var(--accent); font-style: normal; font-weight: 500; }
+      .hero .copy { margin: 29px 0 35px; }
+      .button { display: inline-flex; align-items: center; justify-content: space-between; min-width: 172px; min-height: 50px; padding: 0 13px 0 19px; border: 1px solid var(--ink); background: #fff; font-size: 12px; font-weight: 700; letter-spacing: -.02em; text-decoration: none; transition: color .3s, background .3s; }
+      .button span { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 50%; color: #fff; background: var(--ink); font-size: 16px; transition: transform .3s, color .3s, background .3s; }
+      .button:hover { color: #fff; background: var(--ink); }
+      .button:hover span { color: var(--ink); background: #fff; transform: rotate(45deg); }
+      .media { position: relative; overflow: hidden; background: var(--image); }
+      .media::before { position: absolute; inset: 14px; border: 1px solid rgba(36,36,36,.12); content: ""; }
+      .media-label { position: absolute; top: 50%; left: 50%; display: grid; width: 94px; height: 94px; place-items: center; border: 1px solid rgba(36,36,36,.38); border-radius: 50%; color: #77746f; font-size: 9px; font-weight: 700; letter-spacing: .13em; text-align: center; transform: translate(-50%, -50%); }
+      .media-label::after { display: block; margin-top: -12px; content: "IMAGE AREA"; font-size: 7px; letter-spacing: .08em; }
+      .hero-media { min-height: 560px; }
+      .hero-media::after { position: absolute; right: 28px; bottom: 25px; left: 28px; padding-top: 14px; border-top: 1px solid rgba(36,36,36,.22); color: var(--muted); content: "GENOBODY  /  PRIVATE RECOVERY"; font-size: 9px; font-weight: 700; letter-spacing: .12em; }
+      .hero-stamp { position: absolute; top: 26px; right: 26px; display: grid; width: 62px; height: 62px; place-items: center; border-radius: 50%; background: #fff; color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: -.03em; }
+
+      /* Intro */
+      .intro { display: grid; grid-template-columns: 1fr 1fr; gap: 10%; align-items: center; padding: 158px 0; border-top: 1px solid var(--line); }
+      .intro-visual { display: grid; grid-template-columns: 1.15fr .85fr; gap: 14px; min-height: 380px; }
+      .intro-panel { position: relative; overflow: hidden; background: var(--soft); }
+      .intro-panel:first-child::before { position: absolute; top: 44px; left: 15%; width: 68%; aspect-ratio: 1; border: 1px solid #c9c6c0; border-radius: 50%; content: ""; }
+      .intro-panel:first-child::after { position: absolute; top: 84px; left: 29%; width: 43%; aspect-ratio: 1; border-radius: 50%; background: #dedbd5; content: ""; }
+      .intro-panel:last-child { display: flex; flex-direction: column; justify-content: space-between; padding: 22px; background: #f1efeb; }
+      .intro-panel:last-child b { font-size: 13px; font-weight: 600; letter-spacing: -.05em; line-height: 1.55; }
+      .intro-panel:last-child span { display: grid; width: 49px; height: 49px; place-items: center; border: 1px solid #bfbab2; border-radius: 50%; color: var(--accent); font-size: 10px; font-weight: 700; }
+      .intro-content .copy { margin-top: 25px; }
+      .intro-signature { display: flex; align-items: center; gap: 15px; margin-top: 44px; color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .06em; }
+      .intro-signature::before { width: 38px; height: 1px; background: currentColor; content: ""; }
+
+      /* Program */
+      .programs { padding: 148px 0 165px; background: var(--soft); }
+      .program-head { display: flex; align-items: end; justify-content: space-between; gap: 42px; }
+      .program-head .copy { padding-bottom: 4px; }
+      .program-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 72px; }
+      .program-card { position: relative; display: block; padding-bottom: 25px; background: #fff; color: var(--ink); text-decoration: none; transition: transform .35s ease, box-shadow .35s ease; }
+      .program-card:hover { box-shadow: 0 18px 36px rgba(36,36,36,.08); transform: translateY(-7px); }
+      .program-card:nth-child(2) { margin-top: 46px; }
+      .program-card .media { aspect-ratio: 1 / .9; }
+      .program-card .media::after { position: absolute; right: 20px; bottom: 17px; z-index: 1; width: 31px; height: 31px; border: 1px solid rgba(36,36,36,.35); border-radius: 50%; background: #fff; content: "↗"; font-size: 16px; line-height: 28px; text-align: center; transition: transform .3s, background .3s, color .3s; }
+      .program-card:hover .media::after { color: #fff; background: var(--ink); transform: rotate(45deg); }
+      .program-card .card-copy { padding: 23px 25px 0; }
+      .card-index { display: block; margin-bottom: 12px; color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: .12em; }
+      .program-card h3 { margin-bottom: 9px; font-size: 20px; font-weight: 600; letter-spacing: -.06em; }
+      .program-card p { color: var(--muted); font-size: 13px; letter-spacing: -.04em; line-height: 1.75; }
+      .program-caption { display: flex; align-items: center; justify-content: space-between; margin-top: 45px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+      .program-caption strong { color: var(--ink); font-weight: 600; }
+
+      /* Method */
+      .method { padding: 166px 0; }
+      .method-top { display: grid; grid-template-columns: 1fr 1fr; gap: 8%; align-items: end; }
+      .method-chart { position: relative; height: 250px; margin-top: 75px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+      .method-chart::before { position: absolute; top: 50%; right: 0; left: 0; height: 1px; background: var(--line); content: ""; }
+      .method-path { position: absolute; top: 50%; right: 7%; left: 7%; height: 1px; background: var(--accent); transform: rotate(-9deg); transform-origin: center; }
+      .method-point { position: absolute; display: grid; width: 54px; height: 54px; place-items: center; border: 1px solid var(--accent); border-radius: 50%; color: var(--accent); background: #fff; font-size: 11px; font-weight: 700; transform: translate(-50%, -50%); transition: color .3s, background .3s, transform .3s; }
+      .method-point:hover { color: #fff; background: var(--accent); transform: translate(-50%, -50%) scale(1.13); }
+      .method-point:nth-of-type(1) { top: 65%; left: 10%; }.method-point:nth-of-type(2) { top: 54%; left: 37%; }.method-point:nth-of-type(3) { top: 39%; left: 64%; }.method-point:nth-of-type(4) { top: 26%; left: 90%; }
+      .method-notes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 27px; }
+      .method-note { min-width: 0; }
+      .method-note span { display: block; margin-bottom: 7px; color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: .12em; }
+      .method-note b { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; letter-spacing: -.04em; }
+      .method-note p { color: var(--muted); font-size: 12px; letter-spacing: -.035em; line-height: 1.7; }
+
+      /* Story */
+      .story { padding: 150px 0; border-top: 1px solid var(--line); }
+      .story-grid { display: grid; grid-template-columns: .96fr 1.04fr; gap: 9%; align-items: center; }
+      .story-media { min-height: 470px; }
+      .story-media .tag { position: absolute; top: 25px; left: 25px; padding: 9px 12px; color: var(--accent); background: #fff; font-size: 10px; font-weight: 700; letter-spacing: .08em; }
+      .story-quote { margin: 28px 0 20px; font-size: clamp(23px, 2.35vw, 34px); font-weight: 500; letter-spacing: -.075em; line-height: 1.58; }
+      .story-quote strong { color: var(--accent); font-weight: 600; }
+      .story-meta { display: flex; align-items: center; gap: 10px; margin-top: 29px; color: var(--muted); font-size: 11px; font-weight: 600; }
+      .story-meta::before { width: 25px; height: 1px; background: var(--accent); content: ""; }
+      .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 83px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+      .stat { min-height: 176px; padding: 24px 30px; border-right: 1px solid var(--line); }
+      .stat:last-child { border: 0; }
+      .stat b { display: block; margin-bottom: 10px; font-size: clamp(38px, 3vw, 51px); font-weight: 600; letter-spacing: -.1em; line-height: 1; }
+      .stat b small { margin-left: 3px; color: var(--accent); font-size: 18px; font-weight: 600; }
+      .stat p { color: var(--muted); font-size: 12px; letter-spacing: -.04em; line-height: 1.65; }
+
+      /* Contact */
+      .contact { padding: 145px 0 124px; background: #fbfbfa; border-top: 1px solid var(--line); }
+      .contact-grid { display: grid; grid-template-columns: 1fr .88fr; gap: 12%; align-items: center; }
+      .contact-display { position: relative; min-height: 380px; overflow: hidden; background: var(--image); }
+      .contact-display::before { position: absolute; top: 50%; left: 50%; width: 58%; aspect-ratio: 1; border: 1px solid #c9c6c1; border-radius: 50%; content: ""; transform: translate(-50%,-50%); }
+      .contact-display::after { position: absolute; top: 50%; left: 50%; width: 34%; aspect-ratio: 1; border-radius: 50%; background: #ddd9d3; content: ""; transform: translate(-50%,-50%); }
+      .contact-display span { position: absolute; right: 24px; bottom: 22px; z-index: 1; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .12em; }
+      .contact-copy .copy { margin: 23px 0 32px; }
+      .contact-list { margin-top: 45px; border-top: 1px solid var(--ink); }
+      .contact-list a { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 13px; font-weight: 600; letter-spacing: -.03em; text-decoration: none; }
+      .contact-list a span { display: grid; width: 27px; height: 27px; place-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--accent); font-size: 16px; transition: transform .3s, background .3s; }
+      .contact-list a:hover span { background: var(--image); transform: rotate(45deg); }
+
+      /* Footer */
+      .footer { padding: 40px 0 34px; background: #fff; }
+      .footer-top { display: flex; align-items: center; justify-content: space-between; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+      .footer-brand { font-size: 19px; font-weight: 700; letter-spacing: -.07em; }
+      .footer-links { display: flex; gap: 18px; color: var(--muted); font-size: 10px; }
+      .footer-bottom { display: flex; justify-content: space-between; padding-top: 18px; color: #aaa7a2; font-size: 9px; letter-spacing: .02em; }
+
+      /* Motion */
+      .reveal { opacity: 0; transform: translateY(22px); transition: opacity .72s ease, transform .72s cubic-bezier(.2,.7,.2,1); }
+      .reveal.visible { opacity: 1; transform: none; }
+      .reveal.delay { transition-delay: .12s; }
+
+      @media (max-width: 900px) {
+        :root { --page: min(100% - 48px, 680px); }
+        .nav, .nav-cta { display: none; }
+        .menu { display: block; }
+        .header.open .menu span:first-child { transform: translateY(6px) rotate(45deg); }
+        .header.open .menu span:nth-child(2) { opacity: 0; }
+        .header.open .menu span:last-child { transform: translateY(-6px) rotate(-45deg); }
+        .nav { position: fixed; top: 78px; right: 0; left: 0; display: grid; gap: 0; max-height: 0; overflow: hidden; margin: 0; background: #fff; transition: max-height .35s ease; }
+        .header.open .nav { max-height: 330px; border-top: 1px solid var(--line); box-shadow: 0 16px 25px rgba(36,36,36,.06); }
+        .nav a { padding: 14px 24px; border-bottom: 1px solid var(--line); font-size: 12px; }
+        .hero { padding-top: 130px; }
+        .hero-grid, .intro, .method-top, .story-grid, .contact-grid { grid-template-columns: 1fr; gap: 44px; }
+        .hero-copy { padding-bottom: 0; }
+        .hero-media { min-height: 430px; }
+        .intro { padding: 110px 0; }
+        .intro-visual { order: 2; max-width: 600px; }
+        .program-head { display: block; }
+        .program-head .copy { margin-top: 22px; }
+        .program-grid { margin-top: 52px; }
+        .method, .story, .contact { padding: 110px 0; }
+        .method-chart { margin-top: 55px; }
+        .story-media { min-height: 400px; }
+        .contact-display { min-height: 320px; }
+      }
+
+      @media (max-width: 600px) {
+        :root { --page: min(100% - 40px, 520px); }
+        .header { height: 70px; }
+        .nav { top: 70px; }
+        .hero { min-height: auto; padding: 112px 0 54px; }
+        .hero h1 { font-size: clamp(43px, 13vw, 53px); line-height: 1.24; }
+        .hero .copy { margin: 23px 0 29px; font-size: 14px; }
+        .hero-media { min-height: 350px; }
+        .title { font-size: clamp(33px, 10.4vw, 41px); line-height: 1.34; }
+        .copy { font-size: 14px; }
+        .intro, .method, .story, .contact { padding: 85px 0; }
+        .intro-visual { grid-template-columns: 1fr .8fr; min-height: 270px; }
+        .intro-panel:last-child { padding: 16px; }
+        .intro-panel:last-child b { font-size: 12px; }
+        .programs { padding: 85px 0 100px; }
+        .program-grid { grid-template-columns: 1fr; gap: 14px; }
+        .program-card:nth-child(2) { margin-top: 0; }
+        .program-card .media { aspect-ratio: 1 / .67; }
+        .program-caption { display: block; line-height: 1.8; }
+        .program-caption strong { display: block; margin-top: 5px; }
+        .method-chart { height: 190px; }
+        .method-point { width: 42px; height: 42px; font-size: 9px; }
+        .method-notes { grid-template-columns: 1fr 1fr; gap: 24px 15px; }
+        .method-note p { font-size: 11px; }
+        .story-media { min-height: 320px; }
+        .story-quote { font-size: 22px; }
+        .stats { margin-top: 53px; }
+        .stat { min-height: 138px; padding: 18px 11px; }
+        .stat b { font-size: 33px; }
+        .stat b small { font-size: 14px; }
+        .stat p { font-size: 10px; }
+        .contact-display { min-height: 260px; }
+        .footer-top, .footer-bottom { display: block; }
+        .footer-links { margin-top: 12px; }
+        .footer-bottom p + p { margin-top: 5px; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header" id="header">
+      <div class="shell header-inner">
+        <a class="brand" href="#top">GENOBODY <span>RECOVERY STUDIO</span></a>
+        <nav class="nav" aria-label="주 메뉴">
+          <a href="#about">ABOUT</a>
+          <a href="#program">PROGRAM</a>
+          <a href="#method">METHOD</a>
+          <a href="#story">STORY</a>
+          <a href="#contact">CONTACT</a>
+        </nav>
+        <a class="nav-cta" href="#contact">상담 예약 <i>↗</i></a>
+        <button class="menu" type="button" aria-label="메뉴 열기" aria-expanded="false"><span></span><span></span><span></span></button>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero shell">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="hero-kicker reveal">PRIVATE RECOVERY STUDIO</p>
+            <h1 class="reveal delay">몸을 편안하게,<em>나를 온전히.</em></h1>
+            <p class="copy reveal delay">출산과 일상으로 달라진 몸을 섬세하게 살피고, 나만의 속도로 회복을 시작하는 프라이빗 리커버리 스튜디오입니다.</p>
+            <a class="button reveal delay" href="#contact">회복 상담 예약 <span>↗</span></a>
+          </div>
+          <div class="media hero-media reveal delay" aria-label="메인 이미지 영역"><span class="media-label">GENOBODY</span><span class="hero-stamp">01</span></div>
+        </div>
+      </section>
+
+      <section class="intro shell" id="about" aria-labelledby="about-title">
+        <div class="intro-visual reveal" aria-label="회복의 리듬을 나타내는 그래픽"><div class="intro-panel"></div><div class="intro-panel"><b>오늘의 몸을 듣고,<br />내일의 움직임을 준비합니다.</b><span>01</span></div></div>
+        <div class="intro-content reveal delay"><p class="eyebrow">About Genobody</p><h2 class="title" id="about-title">회복이 필요한 모든 순간에,<br /><em>나에게 맞는 리듬을.</em></h2><p class="copy">제노바디는 한 번의 운동보다 오래 편안한 일상을 생각합니다. 현재의 컨디션과 생활 습관을 함께 읽고, 작지만 분명한 변화를 설계합니다.</p><p class="intro-signature">YOUR BODY, YOUR RHYTHM</p></div>
+      </section>
+
+      <section class="programs" id="program" aria-labelledby="program-title">
+        <div class="shell"><div class="program-head"><div class="reveal"><p class="eyebrow">Curated program</p><h2 class="title" id="program-title">오늘의 목적에 맞춘,<br /><em>세 가지 회복의 선택.</em></h2></div><p class="copy reveal delay">모든 프로그램은 현재의 몸 상태와 목표를 기준으로 개인에게 맞춰 진행됩니다.</p></div>
+          <div class="program-grid">
+            <a class="program-card reveal" href="#contact"><div class="media"><span class="media-label">PROGRAM 01</span></div><div class="card-copy"><span class="card-index">01 / RECOVERY</span><h3>Women’s Recovery</h3><p>산전·산후 컨디션과 코어 밸런스를 위한 1:1 회복 프로그램</p></div></a>
+            <a class="program-card reveal delay" href="#contact"><div class="media"><span class="media-label">PROGRAM 02</span></div><div class="card-copy"><span class="card-index">02 / BALANCE</span><h3>Posture &amp; Balance</h3><p>자세와 움직임의 불균형을 부드럽게 되돌리는 데일리 케어</p></div></a>
+            <a class="program-card reveal" href="#contact"><div class="media"><span class="media-label">PROGRAM 03</span></div><div class="card-copy"><span class="card-index">03 / CONDITIONING</span><h3>Recovery Conditioning</h3><p>통증 이후의 몸을 존중하며 기능과 활력을 회복하는 과정</p></div></a>
+          </div>
+          <div class="program-caption"><span>GENOBODY PROGRAMS ARE CREATED FOR REAL DAILY LIFE.</span><strong>1:1 PRIVATE SESSION</strong></div>
+        </div>
+      </section>
+
+      <section class="method shell" id="method" aria-labelledby="method-title">
+        <div class="method-top"><div class="reveal"><p class="eyebrow">The recovery method</p><h2 class="title" id="method-title">한 번의 진단에서 시작해,<br /><em>일상의 변화로 이어집니다.</em></h2></div><p class="copy reveal delay">정해진 루틴을 반복하지 않습니다. 상담부터 세션 이후의 생활 관리까지, 회복이 필요한 지점을 차분히 연결합니다.</p></div>
+        <div class="method-chart reveal" aria-label="제노바디 회복 과정 그래프"><div class="method-path"></div><span class="method-point">01</span><span class="method-point">02</span><span class="method-point">03</span><span class="method-point">04</span></div>
+        <div class="method-notes reveal"><div class="method-note"><span>01</span><b>Listen</b><p>불편한 지점과 일상의 리듬을 듣습니다.</p></div><div class="method-note"><span>02</span><b>Analyze</b><p>움직임과 밸런스를 세밀하게 확인합니다.</p></div><div class="method-note"><span>03</span><b>Recover</b><p>지금의 몸에 맞는 세션을 진행합니다.</p></div><div class="method-note"><span>04</span><b>Continue</b><p>가벼운 일상이 이어지도록 함께합니다.</p></div></div>
+      </section>
+
+      <section class="story shell" id="story" aria-labelledby="story-title">
+        <div class="story-grid"><div class="media story-media reveal" aria-label="회원 스토리 이미지 영역"><span class="tag">MEMBER STORY</span><span class="media-label">STORY IMAGE</span></div><div class="reveal delay"><p class="eyebrow">More than a result</p><h2 class="title" id="story-title">숫자보다 먼저,<br /><em>가벼워지는 하루.</em></h2><p class="story-quote">“아이를 안을 때도, 아침에 일어날 때도 <strong>몸을 의식하지 않게 된 것</strong>이 가장 큰 변화였어요.”</p><p class="copy">작은 변화가 쌓여 나에게 집중할 여유가 생깁니다. 제노바디가 함께한 회복은 회원님의 매일 안에서 이어집니다.</p><p class="story-meta">Women’s Recovery · Member’s note</p></div></div>
+        <div class="stats reveal" aria-label="제노바디 수치"><div class="stat"><b>92<small>%</small></b><p>프로그램 만족도</p></div><div class="stat"><b>8<small>년+</small></b><p>회복만을 연구한 시간</p></div><div class="stat"><b>3,500<small>+</small></b><p>함께한 프라이빗 세션</p></div></div>
+      </section>
+
+      <section class="contact" id="contact" aria-labelledby="contact-title"><div class="shell contact-grid"><div class="contact-copy reveal"><p class="eyebrow">Begin your recovery</p><h2 class="title" id="contact-title">지금의 몸을 위한,<br /><em>가장 편안한 시작.</em></h2><p class="copy">부담 없이 현재의 컨디션을 들려주세요. 첫 상담은 회복의 방향을 함께 찾아보는 시간입니다.</p><a class="button" href="tel:0000000000">상담 예약하기 <span>↗</span></a><div class="contact-list"><a href="#contact">운영 시간 확인 <span>↗</span></a><a href="#contact">가까운 스튜디오 찾기 <span>↗</span></a></div></div><div class="contact-display reveal delay" aria-label="상담 안내 이미지 영역"><span>PRIVATE CONSULTATION</span></div></div></section>
+    </main>
+
+    <footer class="footer"><div class="shell"><div class="footer-top"><div class="footer-brand">GENOBODY</div><div class="footer-links"><a href="#top">Instagram</a><a href="#contact">Kakao Channel</a><a href="#contact">Location</a></div></div><div class="footer-bottom"><p>© 2026 GENOBODY. ALL RIGHTS RESERVED.</p><p>PRIVATE RECOVERY STUDIO · SEOUL</p></div></div></footer>
+
+    <script>
+      const header = document.querySelector('#header');
+      const menu = document.querySelector('.menu');
+      const links = document.querySelectorAll('.nav a');
+      const updateHeader = () => header.classList.toggle('is-scrolled', window.scrollY > 18);
+      updateHeader();
+      window.addEventListener('scroll', updateHeader, { passive: true });
+      menu.addEventListener('click', () => { const open = header.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open)); menu.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기'); });
+      links.forEach((link) => link.addEventListener('click', () => { header.classList.remove('open'); menu.setAttribute('aria-expanded', 'false'); }));
+      const observer = new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }), { threshold: .12 });
+      document.querySelectorAll('.reveal').forEach((item) => observer.observe(item));
+    </script>
+  </body>
+</html>
