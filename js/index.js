@@ -21,6 +21,25 @@ if (page) {
   page.querySelectorAll('.geno-mom-comparison').forEach((slider) => {
     let startX = 0;
     let startScrollLeft = 0;
+    const progressIndicator = slider.querySelector('.geno-mom-comparison-progress span');
+
+    const getSlideStep = () => {
+      const firstSlide = slider.querySelector('.geno-mom-comparison-slide');
+      const secondSlide = slider.querySelector('.geno-mom-comparison-slide + .geno-mom-comparison-slide');
+      if (!firstSlide) return 0;
+      if (secondSlide) return secondSlide.offsetLeft - firstSlide.offsetLeft;
+      return firstSlide.getBoundingClientRect().width;
+    };
+
+    const updateProgress = () => {
+      if (!progressIndicator) return;
+      const maxScroll = slider.scrollWidth - slider.clientWidth;
+      const thumbSize = maxScroll > 0 ? (slider.clientWidth / slider.scrollWidth) * 100 : 100;
+      const travel = 100 - thumbSize;
+      const position = maxScroll > 0 ? (slider.scrollLeft / maxScroll) * travel : 0;
+      progressIndicator.style.width = `${thumbSize}%`;
+      progressIndicator.style.left = `${position}%`;
+    };
 
     slider.addEventListener('pointerdown', (event) => {
       startX = event.clientX;
@@ -33,6 +52,9 @@ if (page) {
       if (!slider.classList.contains('geno-mom-is-dragging')) return;
       slider.scrollLeft = startScrollLeft - (event.clientX - startX);
     });
+    slider.addEventListener('scroll', updateProgress, { passive:true });
+    window.addEventListener('resize', updateProgress);
+    updateProgress();
 
     const stopDragging = (event) => {
       if (!slider.classList.contains('geno-mom-is-dragging')) return;
@@ -45,7 +67,8 @@ if (page) {
     slider.addEventListener('keydown', (event) => {
       if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
       event.preventDefault();
-      slider.scrollBy({ left: event.key === 'ArrowRight' ? 240 : -240, behavior: 'smooth' });
+      const step = getSlideStep();
+      slider.scrollBy({ left: event.key === 'ArrowRight' ? step : -step, behavior: 'smooth' });
     });
   });
 }
