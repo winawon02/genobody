@@ -21,7 +21,7 @@ if (page) {
   page.querySelectorAll('.geno-mom-comparison').forEach((slider) => {
     let startX = 0;
     let startScrollLeft = 0;
-    const progressIndicator = slider.querySelector('.geno-mom-comparison-progress span');
+    const progressIndicator = slider.closest('.geno-mom-comparison-frame')?.querySelector('.geno-mom-comparison-progress span');
 
     const getSlideStep = () => {
       const firstSlide = slider.querySelector('.geno-mom-comparison-slide');
@@ -42,6 +42,7 @@ if (page) {
     };
 
     slider.addEventListener('pointerdown', (event) => {
+      event.preventDefault();
       startX = event.clientX;
       startScrollLeft = slider.scrollLeft;
       slider.classList.add('geno-mom-is-dragging');
@@ -53,6 +54,7 @@ if (page) {
       slider.scrollLeft = startScrollLeft - (event.clientX - startX);
     });
     slider.addEventListener('scroll', updateProgress, { passive:true });
+    slider.addEventListener('dragstart', (event) => event.preventDefault());
     window.addEventListener('resize', updateProgress);
     updateProgress();
 
