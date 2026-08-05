@@ -118,6 +118,18 @@ body { margin:0; }
 #geno-mom-page .geno-mom-community-list .geno-mom-media:nth-child(8) { flex-basis:375px; }
 #geno-mom-page .geno-mom-community-list:hover .geno-mom-community-track { animation-play-state:paused; }
 @keyframes geno-mom-community-roll { to { transform:translateX(calc(-50% - 8px)); } }
+#geno-mom-page .geno-mom-location { padding:135px 0 170px; }
+#geno-mom-page .geno-mom-location-heading { margin-bottom:52px; }
+#geno-mom-page .geno-mom-location-heading .geno-mom-eyebrow { margin-bottom:18px; font-size:24px; }
+#geno-mom-page .geno-mom-location-heading h2 { margin:0; }
+#geno-mom-page .geno-mom-location-layout { display:grid; grid-template-columns:350px minmax(0,1fr); gap:80px; align-items:center; }
+#geno-mom-page .geno-mom-location-info dl { margin:0; }
+#geno-mom-page .geno-mom-location-info dl > div + div { margin-top:28px; }
+#geno-mom-page .geno-mom-location-info dt { margin-bottom:5px; font-size:15px; font-weight:700; }
+#geno-mom-page .geno-mom-location-info dd { margin:0; color:#575756; font-size:15px; line-height:1.75; }
+#geno-mom-page .geno-mom-location-button { display:inline-flex; align-items:center; justify-content:center; min-width:103px; min-height:52px; margin-top:34px; padding:0 22px; border:1px solid #242525; color:#242525; font-size:14px; font-weight:600; text-decoration:none; }
+#geno-mom-page .geno-mom-location-map { position:relative; min-height:360px; overflow:hidden; background:#eeece8; }
+#geno-mom-page .geno-mom-location-map > span { position:absolute; top:50%; left:50%; color:#8f8a83; font-size:13px; transform:translate(-50%,-50%); white-space:nowrap; }
 @media (min-width:701px) { #geno-mom-page .geno-mom-program-intro { position:sticky; top:120px; align-self:start; } }
 @media (prefers-reduced-motion: no-preference) {
   #geno-mom-page.geno-mom-motion-ready [data-geno-mom-reveal] { opacity:0; transform:translateY(42px); transition:opacity .7s ease,transform .8s cubic-bezier(.22,1,.36,1); transition-delay:var(--reveal-delay,0ms); will-change:opacity,transform; }
@@ -213,4 +225,13 @@ body { margin:0; }
   #geno-mom-page .geno-mom-community-list .geno-mom-media:nth-child(2) { flex-basis:245px; }
   #geno-mom-page .geno-mom-community-list .geno-mom-media:nth-child(3) { flex-basis:180px; }
   #geno-mom-page .geno-mom-community-list .geno-mom-media:nth-child(4) { flex-basis:225px; }
+  #geno-mom-page .geno-mom-location { padding:85px 0 110px; }
+  #geno-mom-page .geno-mom-location-heading { margin-bottom:34px; }
+  #geno-mom-page .geno-mom-location-heading .geno-mom-eyebrow { margin-bottom:12px; font-size:18px; }
+  #geno-mom-page .geno-mom-location-heading h2 { font-size:32px; }
+  #geno-mom-page .geno-mom-location-layout { grid-template-columns:1fr; gap:40px; }
+  #geno-mom-page .geno-mom-location-info dt { font-size:13px; }
+  #geno-mom-page .geno-mom-location-info dd { font-size:13px; }
+  #geno-mom-page .geno-mom-location-button { min-height:44px; margin-top:26px; font-size:13px; }
+  #geno-mom-page .geno-mom-location-map { min-height:300px; }
 }

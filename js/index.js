@@ -73,4 +73,28 @@ if (page) {
       slider.scrollBy({ left: event.key === 'ArrowRight' ? step : -step, behavior: 'smooth' });
     });
   });
+
+  const mapContainer = page.querySelector('#geno-mom-kakao-map');
+  const mapAddress = '인천 연수구 첨단대로 40';
+
+  if (mapContainer && window.kakao && window.kakao.maps) {
+    kakao.maps.load(() => {
+      const geocoder = new kakao.maps.services.Geocoder();
+      geocoder.addressSearch(mapAddress, (result, status) => {
+        if (status !== kakao.maps.services.Status.OK || !result[0]) {
+          mapContainer.textContent = '지도를 불러오지 못했습니다.';
+          return;
+        }
+
+        const position = new kakao.maps.LatLng(result[0].y, result[0].x);
+        mapContainer.textContent = '';
+        const map = new kakao.maps.Map(mapContainer, {
+          center: position,
+          level: 3
+        });
+
+        new kakao.maps.Marker({ map, position });
+      });
+    });
+  }
 }
