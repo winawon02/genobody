@@ -77,24 +77,61 @@ if (page) {
   const mapContainer = page.querySelector('#geno-mom-kakao-map');
   const mapAddress = '인천 연수구 첨단대로 40';
 
-  if (mapContainer && window.kakao && window.kakao.maps) {
-    kakao.maps.load(() => {
-      const geocoder = new kakao.maps.services.Geocoder();
+  const initKakaoMap = () => {
+    if (!window.kakao?.maps) {
+      mapContainer.textContent = '지도를 불러오지 못했습니다.';
+      return;
+    }
+
+    window.kakao.maps.load(() => {
+      if (!window.kakao.maps.services) {
+        mapContainer.textContent = '지도를 불러오지 못했습니다.';
+        return;
+      }
+      const geocoder = new window.kakao.maps.services.Geocoder();
       geocoder.addressSearch(mapAddress, (result, status) => {
-        if (status !== kakao.maps.services.Status.OK || !result[0]) {
+        if (status !== window.kakao.maps.services.Status.OK || !result[0]) {
           mapContainer.textContent = '지도를 불러오지 못했습니다.';
           return;
         }
 
-        const position = new kakao.maps.LatLng(result[0].y, result[0].x);
+        const position = new window.kakao.maps.LatLng(result[0].y, result[0].x);
         mapContainer.textContent = '';
-        const map = new kakao.maps.Map(mapContainer, {
+        const map = new window.kakao.maps.Map(mapContainer, {
           center: position,
           level: 3
         });
 
-        new kakao.maps.Marker({ map, position });
+        new window.kakao.maps.Marker({ map, position });
       });
     });
-  }
+  };
+
+  const loadKakaoMapSdk = () => {
+    if (window.kakao?.maps) {
+      initKakaoMap();
+      return;
+    }
+
+    const existingScript = document.querySelector('script[data-geno-mom-kakao-sdk], script[src*="dapi.kakao.com/v2/maps/sdk.js"]');
+    if (existingScript) {
+      existingScript.addEventListener('load', initKakaoMap, { once:true });
+      existingScript.addEventListener('error', () => {
+        mapContainer.textContent = '지도를 불러오지 못했습니다.';
+      }, { once:true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.dataset.genoMomKakaoSdk = 'true';
+    script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=817245a2c8d4c6dba8b8da968cfd09cc&autoload=false&libraries=services';
+    script.async = true;
+    script.addEventListener('load', initKakaoMap, { once:true });
+    script.addEventListener('error', () => {
+      mapContainer.textContent = '지도를 불러오지 못했습니다.';
+    }, { once:true });
+    document.head.appendChild(script);
+  };
+
+  if (mapContainer) loadKakaoMapSdk();
 }
